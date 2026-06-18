@@ -1,0 +1,8 @@
+Agrupacion;Valor;Num_Ciphers_Dist;Top1_Cipher;Top1_Cipher_%;Top2_Cipher;Top2_Cipher_%;Top1_Hash_Sec_C;Top1_Hash_Sec_C_%
+SO;LINUX;9;1301;44.0;1302;41.51;a56c5b993250;53.36
+SO;WINDOWS;9;1301;49.06;1302;29.62;a56c5b993250;42.38
+Navegador;chrome;10;1301;59.61;1302;33.15;234ea6891581;54.77
+Navegador;edge;10;1302;57.36;1301;28.02;a56c5b993250;62.83
+Navegador;firefox;10;1301;49.57;c02f;25.86;a56c5b993250;51.03
+Dispositivo;desktop;10;1301;45.27;1302;37.98;a56c5b993250;49.68
+Dispositivo;mobile;9;1301;45.9;1302;37.6;a56c5b993250;50.17
