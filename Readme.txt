@@ -37,7 +37,7 @@ sudo docker build --no-cache -t trafico_scanner .
 ```
 
 ### Modo debug
-Los scripts imprimen por pantalla el progreso de la ejecución. Para desactivarlo, en cada archivo hay una variable `IMPRIMIR` que se puede poner a `0`. Tras modificarla hay que recargar la imagen Docker:
+Los scripts imprimen por pantalla el progreso de la ejecución. Para desactivarlo, en cada archivo hay una variable `IMPRIMIR` que se puede poner a `0`. Tras modificarla hay que recargar la imagen del Docker:
 ```bash
 sudo docker build -t trafico_scanner .
 ```
