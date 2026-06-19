@@ -82,7 +82,7 @@ def generar_graficas_separadas(modo):
             plt.tight_layout()
             
             ruta_save_lat = os.path.join(nombre_carpeta_graficas, f'LAT_{nombre_salida}.png')
-            plt.savefig(ruta_save_lat, bbox_inches='tight')
+            plt.savefig(ruta_save_lat, dpi=300,bbox_inches='tight')
             plt.close()
             print(f"Archivo LAT WEB con grafica guardada en {ruta_save_lat}")
 
@@ -100,10 +100,11 @@ def generar_graficas_separadas(modo):
             plt.xticks(rotation=90, fontsize=8)
             plt.grid(True, linestyle=':', alpha=0.5)
             plt.legend(title=conf['titulo'], bbox_to_anchor=(1.01, 1), loc='upper left')
+            plt.margins(x=0.01, y=0.05)
             plt.tight_layout()
             
             ruta_save_ttl = os.path.join(nombre_carpeta_graficas, f'TTL_{nombre_salida}.png')
-            plt.savefig(ruta_save_ttl, bbox_inches='tight')
+            plt.savefig(ruta_save_ttl, dpi=300, bbox_inches='tight')
             plt.close()
             print(f"Archivo TTL WEB con grafica guardada en {ruta_save_ttl}")
 
@@ -140,7 +141,7 @@ def generar_graficas_separadas(modo):
 
                 plt.tight_layout()
                 ruta_save_gl = os.path.join(nombre_carpeta_graficas, f'LAT_GL_{nombre_salida}.png')
-                plt.savefig(ruta_save_gl, bbox_inches='tight')
+                plt.savefig(ruta_save_gl, dpi=300, bbox_inches='tight')
                 plt.close()
                 print(f"Archivo global LAT con grafica guardada en {ruta_save_gl}")
 
