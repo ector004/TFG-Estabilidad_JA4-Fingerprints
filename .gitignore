@@ -13,6 +13,9 @@ ja4x/
 RESULTADO_JA4_COMPARACION_FINAL.csv
 RESULTADO_JA4S_COMPARACION_FINAL.csv
 
+# Comandos de ayuda
+comandos_cmd_windows
+
 # Python
 __pycache__/
 *.pyc
