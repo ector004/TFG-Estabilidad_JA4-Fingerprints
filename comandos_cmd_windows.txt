@@ -1,8 +1,0 @@
-    Dar permisos de programador en windows desde la powershell general
-Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
-
-    Para ejecutar desde Windows hay q llamar a la powershell asi
-powershell -ExecutionPolicy Bypass -File automatizacion.ps1
-
-    Para que sepa donde esta wireShark escuchando, y modificar el argumento de Interfaz de automatizacion.ps1
-"C:\Program Files\Wireshark\tshark.exe" -D
