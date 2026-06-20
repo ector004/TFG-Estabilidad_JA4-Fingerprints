@@ -1,9 +1,16 @@
+# Autor: Héctor Payeras Rubio
+# TFG: Análisis de la estabilidad y variabilidad de las huellas digitales JA4 en distintos contextos
+# Universidad Autónoma de Madrid - Escuela Politécnica Superior, 2026
+#
+# Descripción:
+#   Genera las cuatro gráficas comparativas de similitud de huellas (Levenshtein, Jaccard cipher suites, Jaccard extensiones e índice total) a partir de DATOS_HUELLAS_GENERALES.csv.
+
+
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 
-# 1. Crear estructura de carpetas
 ruta_base = 'Graficas_huellas'
 os.makedirs(ruta_base, exist_ok=True)
 
@@ -22,7 +29,7 @@ def generar_comparativas_individuales(archivo_csv):
     x = np.arange(len(labels))
     width = 0.35
 
-    # Definimos cada argumento de tu TFG como una métrica
+    # Definimos cada argumento omo una métrica
     metricas = [
         ('ESTRUCTURA_LEVENSHTEIN', 'CL_Levenshtein', 'SRV_Levenshtein', 'Índice (0-1)', 'Comparativa Similitud Estructural (Levenshtein)'),
         ('SIMILITUD_CIPHERS', 'CL_Sim_Ciphers', 'SRV_Sim_Ciphers', 'Índice (0-1)', 'Comparativa Similitud ALG Cifrado'),
@@ -41,7 +48,7 @@ def generar_comparativas_individuales(archivo_csv):
         plt.axvline(x=1.5, color='grey', linestyle='--', linewidth=0.8)
         plt.axvline(x=4.5, color='grey', linestyle='--', linewidth=0.8)
 
-        # Títulos y formato
+        # Títulos
         plt.title(titulo, fontsize=12, fontweight='bold')
         plt.ylabel(ylabel)
         plt.xticks(x, labels)
@@ -50,7 +57,6 @@ def generar_comparativas_individuales(archivo_csv):
         
         plt.tight_layout()
         
-        # Guardar
         path_out = os.path.join(ruta_base, f"{nombre_fich}.png")
         plt.savefig(path_out)
         plt.close()

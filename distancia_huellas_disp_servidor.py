@@ -1,3 +1,10 @@
+# Autor: Héctor Payeras Rubio
+# TFG: Análisis de la estabilidad y variabilidad de las huellas digitales JA4 en distintos contextos
+# Universidad Autónoma de Madrid - Escuela Politécnica Superior, 2026
+#
+# Descripción:
+#   Calcula la similitud de huellas JA4S del servidor agrupando por tipo de dispositivo.
+
 import pandas as pd
 import Levenshtein
 import os
@@ -7,7 +14,7 @@ def realizar_estudio_ja4s_por_dispositivo(archivos_dict):
     if not os.path.exists(carpeta_salida):
         os.makedirs(carpeta_salida)
 
-    # 1. Cargar y unificar todas las capturas (Linux + Windows)
+    # Cargar y unificar las capturas (Linux + Windows)
     lista_df = []
     for so_nombre, ruta in archivos_dict.items():
         if os.path.exists(ruta):
@@ -21,7 +28,7 @@ def realizar_estudio_ja4s_por_dispositivo(archivos_dict):
 
     df_total = pd.concat(lista_df, ignore_index=True)
     
-    # Obtenemos las plataformas únicas (Desktop, Mobile)
+    # Obtenemos las plataformas  (Desktop, Mobile)
     plataformas_unicas = df_total['plataforma'].unique()
 
     for plat in plataformas_unicas:
@@ -39,23 +46,22 @@ def realizar_estudio_ja4s_por_dispositivo(archivos_dict):
                 # Filtro: Misma Web (dentro de la misma plataforma)
                 if r1['web_buscada'] == r2['web_buscada']:
                     
-                    # Desglose de JA4S: t130200_1302_a56c5b993250
                     p1 = str(r1['ja4s']).split('_')
                     p2 = str(r2['ja4s']).split('_')
 
                     if len(p1) < 3 or len(p2) < 3:
                         continue
 
-                    # 1. JA4S_a: Levenshtein (Estructura)
+                    # JA4S_a: Levenshtein (Estructura)
                     a1, a2 = p1[0], p2[0]
                     dist_lev_a = Levenshtein.distance(a1, a2)
                     sim_lev_a = 1 / (1 + dist_lev_a)
 
-                    # 2. JA4S_b: Cipher Suite elegido (Binario)
+                    # JA4S_b: Cipher Suite elegido (Binario)
                     b1, b2 = p1[1], p2[1]
                     sim_cipher_b = 1.0 if b1 == b2 else 0.0
 
-                    # 3. JA4S_c: Hash de Extensiones (Binario)
+                    # JA4S_c: Hash de Extensiones (Binario)
                     c1, c2 = p1[2], p2[2]
                     sim_hash_c = 1.0 if c1 == c2 else 0.0
                     
@@ -81,7 +87,7 @@ def realizar_estudio_ja4s_por_dispositivo(archivos_dict):
         if res:
             df_output = pd.DataFrame(res)
             
-            # ORDENACIÓN N3: 1. Web -> 2. Igualdad (True arriba) -> 3. SO_A
+            # ORDENACIÓN: 1. Web -> 2. Igualdad (True arriba) -> 3. SO_A
             df_output = df_output.sort_values(
                 by=['Web_Comun', 'JA4S_Identicas', 'SO_A'], 
                 ascending=[True, False, True]
@@ -91,7 +97,6 @@ def realizar_estudio_ja4s_por_dispositivo(archivos_dict):
             ruta_save = os.path.join(carpeta_salida, nombre_fichero)
             df_output.to_csv(ruta_save, sep=';', index=False)
 
-            # Estadísticas por pantalla
             total = len(df_output)
             iguales = df_output['JA4S_Identicas'].sum()
             

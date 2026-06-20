@@ -1,3 +1,11 @@
+# Autor: Héctor Payeras Rubio
+# TFG: Análisis de la estabilidad y variabilidad de las huellas digitales JA4 en distintos contextos
+# Universidad Autónoma de Madrid - Escuela Politécnica Superior, 2026
+#
+# Descripción:
+#   Calcula la similitud de huellas JA4S del servidor agrupando por sistema operativo mediante igualdad
+#   binaria para las secciones _b y _c y distancia de Levenshtein para la sección _a.
+
 import pandas as pd
 import Levenshtein
 import os
@@ -21,27 +29,25 @@ def realizar_estudio_huellas_ja4s(ruta_csv, so_label):
         for j in range(i + 1, len(records)):
             r1, r2 = records[i], records[j]
             
-            # Solo comparar si es la misma web buscada
+            # Solo comparar si es la misma web
             if r1['web_buscada'] == r2['web_buscada']:
                 
-                # Desglose de JA4S: t130200_1302_a56c5b993250
-                # JA4S_a = [0], JA4S_b = [1], JA4S_c = [2]
                 p1 = str(r1['ja4s']).split('_')
                 p2 = str(r2['ja4s']).split('_')
 
                 if len(p1) < 3 or len(p2) < 3:
                     continue
 
-                # 1. JA4S_a: Levenshtein (Protocolo, TLS, ALPN)
+                # Levenshtein sobre JA4S_a
                 a1, a2 = p1[0], p2[0]
                 dist_lev_a = Levenshtein.distance(a1, a2)
                 sim_lev_a = 1 / (1 + dist_lev_a)
 
-                # 2. JA4S_b: Cipher Suite elegido (Comparación exacta)
+                # Jaccard sobre JA4S_b (Cipher Suite elegido)
                 b1, b2 = p1[1], p2[1]
                 sim_cipher_b = 1.0 if b1 == b2 else 0.0
 
-                # 3. JA4S_c: Hash de Extensiones (Comparación exacta / Efecto avalancha)
+                # Jaccard sobre JA4S_c (Hash de Extensiones)
                 c1, c2 = p1[2], p2[2]
                 sim_hash_c = 1.0 if c1 == c2 else 0.0
                 
@@ -68,17 +74,15 @@ def realizar_estudio_huellas_ja4s(ruta_csv, so_label):
 
     df_output = pd.DataFrame(res)
 
-    # Ordenar N3: Web -> Identicas (True arriba)
+    # # ORDENACIÓN: 1. Web -> 2. Igualdad (True arriba) -> 3. SO_A
     df_output = df_output.sort_values(by=['Web_Comun', 'JA4S_Identicas'], ascending=[True, False])
 
     ruta_save = os.path.join(carpeta_salida, f"DIST_JA4S_SRV_SO_{so_label}.csv")
     df_output.to_csv(ruta_save, sep=';', index=False)
 
-    # Imprimir resumen por pantalla
     total = len(df_output)
     iguales = df_output['JA4S_Identicas'].sum()
     
-    # Reflejamos el SO en los resultados finales por pantalla
     print("-" * 40) 
     print(f" RESULTADOS FINALES SERVIDOR (JA4S): {so_label}")
     print("-" * 40)

@@ -1,3 +1,11 @@
+# Autor: Héctor Payeras Rubio
+# TFG: Análisis de la estabilidad y variabilidad de las huellas digitales JA4 en distintos contextos
+# Universidad Autónoma de Madrid - Escuela Politécnica Superior, 2026
+#
+# Descripción:
+#   Calcula la tasa de colisión exacta entre huellas JA4S del servidor.
+
+
 import pandas as pd
 import itertools
 
@@ -9,7 +17,7 @@ archivo_salida = 'RESULTADO_JA4S_COMPARACION_FINAL.csv'
 def generar_analisis_tfg_completo():
     print(f"--- INICIANDO COMPARACION DE HUELLAS JA4S (SERVIDOR) ---")
     try:
-        # Cargamos las columnas necesarias cambiando ja4 por ja4s
+        # Cargamos las columnas ja4s
         columnas = ['id_captura', 'navegador', 'plataforma', 'web_buscada', 'ja4s', 'tls_server_name']
         
         # Carga y etiqueta de SO

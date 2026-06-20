@@ -1,3 +1,11 @@
+# Autor: Héctor Payeras Rubio
+# TFG: Análisis de la estabilidad y variabilidad de las huellas digitales JA4 en distintos contextos
+# Universidad Autónoma de Madrid - Escuela Politécnica Superior, 2026
+#
+# Descripción:
+#   Genera las gráficas comparativas globales de latencia del cliente y del servidor a partir de LATENCIA_GENERALES.csv.
+
+
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -28,7 +36,6 @@ def generar_comparativas_latencia(archivo_csv):
 
         barras = plt.bar(x, df[col], width, color=color, alpha=0.8, edgecolor='navy' if 'CLIENTE' in nombre_fich else 'darkred')
 
-        # Separadores de categoría
         plt.axvline(x=1.5, color='grey', linestyle='--', linewidth=0.8)
         plt.axvline(x=4.5, color='grey', linestyle='--', linewidth=0.8)
 

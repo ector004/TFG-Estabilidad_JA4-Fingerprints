@@ -1,9 +1,17 @@
+# Autor: Héctor Payeras Rubio
+# TFG: Análisis de la estabilidad y variabilidad de las huellas digitales JA4 en distintos contextos
+# Universidad Autónoma de Madrid - Escuela Politécnica Superior, 2026
+#
+# Descripción:
+#   Genera seis gráficas por variable de latencia y TTL. Acepta un parámetro en línea de comandos: navegador, so o dispositivo.
+
+
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
 import sys
 
-# Configuracion dinamica para localizar carpetas y detectar nombres de columnas
+# Configuracion para localizar carpetas y detectar nombres de columnas
 CONFIGURACION = {
     'navegador': {
         'carpeta': 'Navegador',
@@ -41,7 +49,6 @@ def generar_graficas_separadas(modo):
         return
 
     conf = CONFIGURACION[modo]
-    # Nombre de la carpeta
     nombre_carpeta_graficas = "Graficas_LAT_TTL"
     
     if not os.path.exists(nombre_carpeta_graficas):
@@ -49,7 +56,7 @@ def generar_graficas_separadas(modo):
 
     print(f"--- INICIANDO GENERACION DE GRAFICAS PARA: {conf['titulo'].upper()} ---")
     
-    # 1. GENERACION DE GRAFICAS DETALLADAS (POR WEB)
+    # Graficas de latencia y TTL por web
     tareas_web = [
         (conf['archivo_sv'], f"SERVIDOR_{modo.upper()}", "Servidor"),
         (conf['archivo_cl'], f"CLIENTE_{modo.upper()}", "Cliente")
@@ -69,7 +76,7 @@ def generar_graficas_separadas(modo):
             num_webs = len(df['Web'].unique())
             ancho_ajustado = max(24, num_webs * 0.25)
 
-            # --- GRAFICA LATENCIA WEB ---
+            # Grafica de Latencia Media por Web
             plt.figure(figsize=(ancho_ajustado, 8))
             df_pivot_lat = df.pivot(index='Web', columns=col_id, values='Latencia_Media')
             df_pivot_lat.plot(kind='bar', figsize=(ancho_ajustado, 8), width=0.8, alpha=0.8, ax=plt.gca())
@@ -77,7 +84,6 @@ def generar_graficas_separadas(modo):
             plt.ylabel('Latencia (ms)')
             plt.grid(axis='y', linestyle='--', alpha=0.5)
             
-            # Etiquetas mas pequeñas y con espacio para que sean legibles
             plt.xticks(rotation=90, fontsize=8) 
             plt.tight_layout()
             
@@ -86,7 +92,7 @@ def generar_graficas_separadas(modo):
             plt.close()
             print(f"Archivo LAT WEB con grafica guardada en {ruta_save_lat}")
 
-            # --- GRAFICA TTL WEB ---
+            # Grafica de TTL Moda por Web
             plt.figure(figsize=(ancho_ajustado, 6))
             df_pivot_ttl = df.pivot(index='Web', columns=col_id, values='TTL_Moda')
             offsets = [0.5, 0, -0.5]
@@ -96,7 +102,6 @@ def generar_graficas_separadas(modo):
             plt.title(f'Análisis de TTL ({tipo_texto}) - Estabilidad por Web ({conf["titulo"]})', fontsize=15)
             plt.yticks([0, 32, 64, 100, 128, 255])
             
-            # Etiquetas mas pequeñas en el TTL tambien
             plt.xticks(rotation=90, fontsize=8)
             plt.grid(True, linestyle=':', alpha=0.5)
             plt.legend(title=conf['titulo'], bbox_to_anchor=(1.01, 1), loc='upper left')
@@ -111,7 +116,7 @@ def generar_graficas_separadas(modo):
         except Exception as e:
             print(f"Error procesando {nombre_archivo}: {e}")
 
-    # 2. GENERACION DE GRAFICAS RESUMEN (GLOBAL CON PREFIJO LAT_GL_)
+    # Graficas de latencia y TTL globales
     tareas_global = [
         (conf['archivo_global_sv'], f"SERVIDOR_{modo.upper()}", "Servidor"),
         (conf['archivo_global_cl'], f"CLIENTE_{modo.upper()}", "Cliente")

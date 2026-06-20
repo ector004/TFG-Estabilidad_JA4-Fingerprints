@@ -1,3 +1,11 @@
+# Autor: Héctor Payeras Rubio
+# TFG: Análisis de la estabilidad y variabilidad de las huellas digitales JA4 en distintos contextos
+# Universidad Autónoma de Madrid - Escuela Politécnica Superior, 2026
+#
+# Descripción:
+#   Calcula la similitud de huellas JA4 del cliente agrupando por sistema operativo mediante la distancia de Levenshtein normalizada
+#   y el coeficiente de Jaccard sobre las listas en crudo de cipher suites y extensiones.
+
 import pandas as pd
 import Levenshtein
 import os
@@ -7,7 +15,7 @@ def calcular_jaccard_detallado(raw_ro_1, raw_ro_2):
         p1 = str(raw_ro_1).split('_')
         p2 = str(raw_ro_2).split('_')
         
-        # Bloque 1: Ciphers, Bloque 2: Extensions
+        # Bloque 1-> Ciphers, Bloque 2-> Extensions
         c1 = set(p1[1].split(',')) if len(p1) > 1 else set()
         c2 = set(p2[1].split(',')) if len(p2) > 1 else set()
         
@@ -41,7 +49,7 @@ def realizar_estudio_huellas_hibrido(ruta_csv, so_label):
         for j in range(i + 1, len(records)):
             r1, r2 = records[i], records[j]
             
-            # Solo comparar si es la misma web
+            # Comparar si es la misma web
             if r1['web_buscada'] == r2['web_buscada']:
                 # Levenshtein sobre prefijo JA4_a
                 a1 = str(r1['ja4']).split('_')[0]
@@ -49,7 +57,7 @@ def realizar_estudio_huellas_hibrido(ruta_csv, so_label):
                 dist_lev = Levenshtein.distance(a1, a2)
                 sim_lev = 1 / (1 + dist_lev)
 
-                # Jaccard desglosado sobre ja4_ro
+                # Jaccard sobre ja4_ro
                 j_ciph, j_ext = calcular_jaccard_detallado(r1['ja4_ro'], r2['ja4_ro'])
                 sim_jaccard_conjunta = (j_ciph + j_ext) / 2
                 
@@ -76,13 +84,12 @@ def realizar_estudio_huellas_hibrido(ruta_csv, so_label):
 
     df_output = pd.DataFrame(res)
 
-    # Ordenar por Web y luego poner las Identicas (True) arriba
+    # ORDENACIÓN: 1. Web -> 2. Igualdad (True arriba) -> 3. SO_A
     df_output = df_output.sort_values(by=['Web_Comun', 'JA4_Identicas'], ascending=[True, False])
 
     ruta_save = os.path.join(carpeta_salida, f"DIST_HUELLAS_CL_SO_{so_label}.csv")
     df_output.to_csv(ruta_save, sep=';', index=False)
 
-    # Imprimir
     total = len(df_output)
     iguales = df_output['JA4_Identicas'].sum()
     

@@ -13,14 +13,13 @@ Tutor: Francisco Javier Ramos de Santiago
 pip install -r requirements.txt
 ```
 
+## Ejecución en Linux
 Comprobar permisos de ejecución en los ficheros ejecutables:
 ```bash
 chmod +x automatizacion.sh lanzador.sh
 ```
 
-
 ### Pasos de ejecución
-
 1. Activar el entorno virtual:
 ```bash
 source venv/bin/activate
@@ -37,10 +36,45 @@ sudo docker build --no-cache -t trafico_scanner .
 ```
 
 ### Modo debug
-Los scripts imprimen por pantalla el progreso de la ejecución. Para desactivarlo, en cada archivo hay una variable `IMPRIMIR` que se puede poner a `0`. Tras modificarla hay que recargar la imagen del Docker:
+Los scripts imprimen por pantalla el progreso de la ejecución. Para desactivarlo, en cada archivo hay una variable `IMPRIMIR` que se puede poner a `0`. Tras modificarla hay que recargar la imagen Docker:
 ```bash
 sudo docker build -t trafico_scanner .
 ```
+
+## Ejecución en Windows
+En Windows no se usa Docker. La captura se realiza con TShark (incluido en Wireshark) y los scripts son equivalentes a los de Linux pero adaptados a PowerShell y Python nativo.
+
+### Requisitos previos en Windows
+1. Instalar [Wireshark](https://www.wireshark.org/) con TShark incluido.
+
+2. Dar permisos de ejecución de scripts PowerShell. Ejecutar PowerShell como administrador y correr:
+```powershell
+Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
+```
+Esto permite ejecutar scripts .ps1 firmados o locales sin restricciones.
+
+3. Identificar el número de interfaz de red donde TShark escuchará:
+```powershell
+"C:\Program Files\Wireshark\tshark.exe" -D
+```
+Anota el número de la interfaz de red activa y modifica la variable `$INTERFAZ` en `automatizacion_windows.ps1` con ese valor.
+
+### Pasos de ejecución en Windows
+```powershell
+powershell -ExecutionPolicy Bypass -File automatizacion_windows.ps1
+```
+
+### Modo debug en Windows
+Al igual que en Linux, `automatizacion_windows.ps1` y `navegador_windows.py` tienen una variable `IMPRIMIR`. Ponla a `0` para silenciar toda la salida.
+
+### Scripts específicos de Windows
+**automatizacion_windows.ps1** — Equivalente a `automatizacion.sh` para Windows. Usa TShark en lugar de tcpdump e integra la lógica del lanzador directamente sin necesidad de Docker. Configura la variable `$INTERFAZ` con el número de interfaz obtenido con el comando anterior.
+
+**navegador_windows.py** — Equivalente a `navegador.py` para Windows. Controla el navegador mediante Selenium WebDriver sin depender del entorno Docker. Soporta Chrome, Edge y Firefox con emulación de dispositivo móvil.
+
+## Notas sobre variables de configuración
+**generar_indices.py** — 
+
 
 ### Nota sobre las capturas
 En `Capturas/` se organizan dos carpetas, `salidasLinux/` y `salidasWindows/`, que contienen los archivos .pcap generados durante el experimento. No se incluyen en el repositorio por su tamaño, pero las bases de datos limpias resultantes de procesarlos están disponibles en `BASE_DATOS_PRUEBA_L.csv` y `BASE_DATOS_PRUEBA_W.csv`.
@@ -57,8 +91,13 @@ En `Capturas/` se organizan dos carpetas, `salidasLinux/` y `salidasWindows/`, q
 
 **Dockerfile** — Define el contenedor Docker usado en Linux para aislar cada captura.
 
+**automatizacion_windows.ps1** — Script principal de captura para Windows. Equivalente a `automatizacion.sh` usando TShark y PowerShell.
+
+**navegador_windows.py** — Controla el navegador mediante Selenium WebDriver en Windows sin depender de Docker.
+
+
 ### Scripts de procesamiento
-**generar_indices.py** — Procesa los JSON generados por el motor JA4, aplica criterios de limpieza y genera las bases de datos BASE_DATOS_PRUEBA_L.csv y BASE_DATOS_PRUEBA_W.csv.
+**generar_indices.py** — Procesa los JSON generados por el motor JA4, aplica criterios de limpieza y genera las bases de datos BASE_DATOS_PRUEBA_L.csv y BASE_DATOS_PRUEBA_W.csv. Contiene una variable `ELEGIR` al inicio del script. Ponla a `0` para procesar las capturas de Windows y a `1` para las de Linux.
 
 ### Scripts de análisis de similitud de huellas del cliente (JA4)
 **distancia_huellas_so_cl.py** — Calcula la similitud de huellas JA4 del cliente agrupando por sistema operativo.
@@ -131,7 +170,7 @@ En `Capturas/` se organizan dos carpetas, `salidasLinux/` y `salidasWindows/`, q
 
 
 ## Orden de ejecución
-1. `automatizacion.sh` -> genera las capturas .pcap
+1. `automatizacion.sh` (Linux) o `automatizacion_windows.ps1` (Windows) -> genera las capturas .pcap
 2. `generar_indices.py` -> genera las bases de datos limpias
 3. Scripts de distancia y latencia -> generan los CSV de resultados en sus carpetas correspondientes
 4. `grafica_huellas.py` y `grafica_lat_ttl.py` -> generan las gráficas finales

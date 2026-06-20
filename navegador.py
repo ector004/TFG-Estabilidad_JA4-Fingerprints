@@ -1,3 +1,12 @@
+# Autor: Héctor Payeras Rubio
+# TFG: Análisis de la estabilidad y variabilidad de las huellas digitales JA4 en distintos contextos
+# Universidad Autónoma de Madrid - Escuela Politécnica Superior, 2026
+#
+# Descripción:
+#   Controla el navegador mediante Selenium WebDriver y gestiona la emulación de dispositivo móvil mediante
+#   User-Agent e iPhone X para Chrome y Edge, y ajuste de resolución para Firefox.
+
+
 import argparse
 import time
 import sys

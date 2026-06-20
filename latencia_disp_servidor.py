@@ -1,12 +1,18 @@
+# Autor: Héctor Payeras Rubio
+# TFG: Análisis de la estabilidad y variabilidad de las huellas digitales JA4 en distintos contextos
+# Universidad Autónoma de Madrid - Escuela Politécnica Superior, 2026
+#
+# Descripción:
+#   Calcula estadísticas de latencia y TTL del servidor agrupando por tipo de dispositivo.
+
+
 import pandas as pd
 import os
 
-# Archivos de entrada
 archivo_windows = 'BASE_DATOS_PRUEBA_W.csv'
 archivo_linux = 'BASE_DATOS_PRUEBA_L.csv'
 
 def generar_analisis_ja4l_servidor_dispositivo():
-    # Crear la carpeta Dispositivo si no existe para evitar errores
     nombre_carpeta = "Dispositivo"
     if not os.path.exists(nombre_carpeta):
         os.makedirs(nombre_carpeta)
@@ -34,7 +40,7 @@ def generar_analisis_ja4l_servidor_dispositivo():
         print(f"Error: {e}")
         return
 
-    # ANALISIS GLOBAL POR DISPOSITIVO (PLATAFORMA)
+    # Analisis global por dispositivo
     global_disp = df_total.groupby('plataforma').agg({
         'latencia': ['mean', 'std', 'min', 'max'],
         'ttl': [lambda x: x.mode()[0], 'mean', 'std']
@@ -50,11 +56,10 @@ def generar_analisis_ja4l_servidor_dispositivo():
     print("="*95)
     print(global_disp.to_string())
     
-    # Guardar en carpeta Dispositivo
     ruta_global = os.path.join(nombre_carpeta, 'SV_DISP_LATENCIA_GLOBAL.csv')
     global_disp.to_csv(ruta_global, sep=';')
 
-    # ANALISIS DETALLADO POR WEB Y DISPOSITIVO
+    # Analisis por web y dispositivo
     resumen_web_disp = df_total.groupby(['web_buscada', 'plataforma']).agg({
         'latencia': ['mean', 'std', 'min', 'max'],
         'ttl': [lambda x: x.mode()[0], 'mean']
@@ -69,11 +74,10 @@ def generar_analisis_ja4l_servidor_dispositivo():
     print("="*95)
     print(resumen_web_disp.head(10).to_string())
     
-    # Guardar en carpeta Dispositivo
     ruta_web = os.path.join(nombre_carpeta, 'SV_DISP_LATENCIA_POR_WEB.csv')
     resumen_web_disp.to_csv(ruta_web, index=False, sep=';')
 
-    # ANALISIS DETALLADO POR SNI Y DISPOSITIVO
+    # Analisis por SNI y dispositivo
     resumen_sni_disp = df_total.groupby(['tls_server_name', 'plataforma']).agg({
         'latencia': ['mean', 'std', 'min', 'max'],
         'ttl': [lambda x: x.mode()[0], 'mean']
@@ -83,7 +87,6 @@ def generar_analisis_ja4l_servidor_dispositivo():
         'SNI', 'Dispositivo', 'Latencia_Media', 'Latencia_Desv', 'Latencia_Min', 'Latencia_Max', 'TTL_Moda', 'TTL_Media'
     ]
     
-    # Guardar en carpeta Dispositivo
     ruta_detalle = os.path.join(nombre_carpeta, 'SV_DISP_LATENCIA_POR_SNI.csv')
     resumen_sni_disp.to_csv(ruta_detalle, index=False, sep=';')
     

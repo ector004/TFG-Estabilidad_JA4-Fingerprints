@@ -1,12 +1,18 @@
+# Autor: Héctor Payeras Rubio
+# TFG: Análisis de la estabilidad y variabilidad de las huellas digitales JA4 en distintos contextos
+# Universidad Autónoma de Madrid - Escuela Politécnica Superior, 2026
+#
+# Descripción:
+#   Calcula estadísticas de latencia y TTL del cliente agrupando por navegador.
+
+
 import pandas as pd
 import os
 
-# Archivos de entrada
 archivo_windows = 'BASE_DATOS_PRUEBA_W.csv'
 archivo_linux = 'BASE_DATOS_PRUEBA_L.csv'
 
 def generar_analisis_ja4l_cliente_navegador():
-    # Crear la carpeta Navegador si no existe para evitar errores
     nombre_carpeta = "Navegador"
     if not os.path.exists(nombre_carpeta):
         os.makedirs(nombre_carpeta)
@@ -31,7 +37,7 @@ def generar_analisis_ja4l_cliente_navegador():
         print(f"Error: {e}")
         return
 
-    # ANALISIS GLOBAL POR NAVEGADOR
+    # Analisis global por navegador
     global_nav = df_total.groupby('navegador').agg({
         'latencia': ['mean', 'std', 'min', 'max'],
         'ttl': [lambda x: x.mode()[0], 'mean', 'std']
@@ -47,11 +53,10 @@ def generar_analisis_ja4l_cliente_navegador():
     print("="*95)
     print(global_nav.to_string())
     
-    # Guardar en carpeta Navegador
     ruta_global = os.path.join(nombre_carpeta, 'CL_NAV_LATENCIA_GLOBAL.csv')
     global_nav.to_csv(ruta_global, sep=';')
 
-    # ANALISIS DETALLADO POR WEB Y NAVEGADOR
+    # Analisis por web y navegador
     resumen_web_nav = df_total.groupby(['web_buscada', 'navegador']).agg({
         'latencia': ['mean', 'std', 'min', 'max'],
         'ttl': [lambda x: x.mode()[0], 'mean']
@@ -66,7 +71,6 @@ def generar_analisis_ja4l_cliente_navegador():
     print("="*95)
     print(resumen_web_nav.head(10).to_string())
     
-    # Guardar en carpeta Navegador
     ruta_web = os.path.join(nombre_carpeta, 'CL_NAV_LATENCIA_POR_WEB.csv')
     resumen_web_nav.to_csv(ruta_web, index=False, sep=';')
     

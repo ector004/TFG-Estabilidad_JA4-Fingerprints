@@ -1,3 +1,11 @@
+# Autor: Héctor Payeras Rubio
+# TFG: Análisis de la estabilidad y variabilidad de las huellas digitales JA4 en distintos contextos
+# Universidad Autónoma de Madrid - Escuela Politécnica Superior, 2026
+#
+# Descripción:
+#   Calcula la tasa de colisión exacta entre huellas JA4 del cliente, determinando qué proporción de pares de capturas del mismo dominio producen huellas idénticas.
+
+
 import pandas as pd
 import itertools
 

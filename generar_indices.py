@@ -1,3 +1,11 @@
+# Autor: Héctor Payeras Rubio
+# TFG: Análisis de la estabilidad y variabilidad de las huellas digitales JA4 en distintos contextos
+# Universidad Autónoma de Madrid - Escuela Politécnica Superior, 2026
+#
+# Descripción:
+#   Procesa los JSON generados por el motor JA4, aplica criterios de limpieza y genera las bases de datos BASE_DATOS_PRUEBA_L.csv y BASE_DATOS_PRUEBA_W.csv.
+#   Contiene una variable `ELEGIR` al inicio del script. Ponla a `0` para procesar las capturas de Windows y a `1` para las de Linux.
+
 import pandas as pd
 import glob
 import os
@@ -61,7 +69,7 @@ def indexar_sin_redundancia(ruta_carpeta):
             
             if not df_filtrado.empty:
                 
-                # --- GENERAMOS EL IDENTIFICADOR BASE ---
+                # Identificador secuencial para cada captura, con W o L según el sistema operativo
                 contador_exitos += 1
                 letra_id = 'W' if elegir == 0 else 'L'
                 
@@ -83,11 +91,11 @@ def indexar_sin_redundancia(ruta_carpeta):
                 # Una fila por cada combinacion de Huella y Dominio
                 df_filtrado = df_filtrado.drop_duplicates(subset=[col_principal, 'tls_server_name'])
                 
-                # --- CREAMOS LA LISTA DE IDENTIFICADORES SECUENCIALES (Ej: 1_1W, 1_2W...) ---
+                # Lista identidicadora (Ej: 1_1W, 1_2W...)
                 ids_filas = [f"{contador_exitos}_{i}{letra_id}" for i in range(1, len(df_filtrado) + 1)]
                 
                 # Guardamos nombres para el CSV final
-                df_filtrado['id_captura'] = ids_filas   # <--- AÑADIDO
+                df_filtrado['id_captura'] = ids_filas
                 df_filtrado['ja4'] = df_filtrado[col_principal]
                 df_filtrado['navegador'] = nav  
                 df_filtrado['plataforma'] = plat
@@ -132,16 +140,15 @@ def indexar_sin_redundancia(ruta_carpeta):
             'ja4s', # Huella Servidor
             'ja4l_cliente', # Latencia Cliente
             'ja4l_servidor', # Latencia Servidor
-            'ja4_o', # Huella Original (O)
-            'ja4_ro', # Huella Cruda-Original (RO)
-            'ja4_r' # Huella Cruda (R)
+            'ja4_o', # Huella Original (_o)
+            'ja4_ro', # Huella Cruda-Original (_ro)
+            'ja4_r' # Huella Cruda (_r)
         ]
         
         # Filtramos solo las columnas que existan en el resultado y aplicamos el orden
         existentes = [c for c in columnas_utiles if c in df_master.columns]
         df_final = df_master[existentes]
         
-        # Guardamos separando por ";"
         if elegir == 0:
             df_final.to_csv('BASE_DATOS_PRUEBA_W.csv', index=False, sep=';')
             print(f"\nSe han guardado de Windows {len(df_final)} filas en: BASE_DATOS_PRUEBA_W.csv")

@@ -1,3 +1,10 @@
+# Autor: Héctor Payeras Rubio
+# TFG: Análisis de la estabilidad y variabilidad de las huellas digitales JA4 en distintos contextos
+# Universidad Autónoma de Madrid - Escuela Politécnica Superior, 2026
+#
+# Descripción:
+#   Calcula la similitud de huellas JA4 del cliente agrupando por navegador.
+
 import pandas as pd
 import Levenshtein
 import os
@@ -7,7 +14,7 @@ def calcular_jaccard_detallado(raw_ro_1, raw_ro_2):
         p1 = str(raw_ro_1).split('_')
         p2 = str(raw_ro_2).split('_')
         
-        # Bloque 1: Ciphers, Bloque 2: Extensions
+        # Bloque 1 -> Ciphers, Bloque 2 -> Extensions
         c1 = set(p1[1].split(',')) if len(p1) > 1 else set()
         c2 = set(p2[1].split(',')) if len(p2) > 1 else set()
         
@@ -28,7 +35,7 @@ def realizar_estudio_unificado_por_navegador(archivos_dict):
     if not os.path.exists(carpeta_salida):
         os.makedirs(carpeta_salida)
 
-    # 1. Cargar y unificar todas las capturas (Linux + Windows)
+    # Cargar y unificar las capturas (Linux + Windows)
     lista_df = []
     for so_nombre, ruta in archivos_dict.items():
         if os.path.exists(ruta):
@@ -88,7 +95,7 @@ def realizar_estudio_unificado_por_navegador(archivos_dict):
         if res:
             df_output = pd.DataFrame(res)
             
-            # ORDENACIÓN N3: 1. Web -> 2. Igualdad (True arriba) -> 3. SO_A
+            # ORDENACIÓN: 1. Web -> 2. Igualdad (True arriba) -> 3. SO_A
             df_output = df_output.sort_values(
                 by=['Web_Comun', 'JA4_Identicas', 'SO_A'], 
                 ascending=[True, False, True]
@@ -98,7 +105,6 @@ def realizar_estudio_unificado_por_navegador(archivos_dict):
             ruta_save = os.path.join(carpeta_salida, nombre_fichero)
             df_output.to_csv(ruta_save, sep=';', index=False)
 
-            # Imprimir
             total = len(df_output)
             iguales = df_output['JA4_Identicas'].sum()
             diferentes = total - iguales

@@ -1,3 +1,11 @@
+# Autor: Héctor Payeras Rubio
+# TFG: Análisis de la estabilidad y variabilidad de las huellas digitales JA4 en distintos contextos
+# Universidad Autónoma de Madrid - Escuela Politécnica Superior, 2026
+#
+# Descripción:
+#   Coordina cada visita individual iniciando tcpdump, lanzando el script de navegación y deteniendo la captura al terminar.
+
+
 #!/bin/bash
 
 # 1 para ver mensajes, 0 para silencio
@@ -25,7 +33,7 @@ DATE=$(date +"%Y-%m-%d_%H-%M-%S")
 FILENAME="${BROWSER}_${DEV}_${URL_CLEAN}_${DATE}.pcap"
 FILEPATH="/app/capturas/$FILENAME"
 
-# Lógica de impresión condicionada
+# Lógica de bandera para imprimir
 if [ "$IMPRIMIR" -eq 1 ]; then
     echo "================================================"
     echo "[TCPDUMP] Iniciando captura: $FILENAME"

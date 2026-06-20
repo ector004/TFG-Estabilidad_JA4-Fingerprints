@@ -1,12 +1,18 @@
+# Autor: Héctor Payeras Rubio
+# TFG: Análisis de la estabilidad y variabilidad de las huellas digitales JA4 en distintos contextos
+# Universidad Autónoma de Madrid - Escuela Politécnica Superior, 2026
+#
+# Descripción:
+#   Calcula estadísticas de latencia y TTL del servidor agrupando por sistema operativo.
+
+
 import pandas as pd
 import os
 
-# Archivos de entrada
 archivo_windows = 'BASE_DATOS_PRUEBA_W.csv'
 archivo_linux = 'BASE_DATOS_PRUEBA_L.csv'
 
 def generar_analisis_ja4l_servidor_final():
-    # Crear la carpeta SO si no existe para evitar errores
     nombre_carpeta = "SO"
     if not os.path.exists(nombre_carpeta):
         os.makedirs(nombre_carpeta)
@@ -32,7 +38,7 @@ def generar_analisis_ja4l_servidor_final():
         print(f"Error: {e}")
         return
 
-    # ANALISIS GLOBAL POR SO ORIGEN
+    # Analisis global por SO
     global_so = df_total.groupby('so_origen').agg({
         'latencia': ['mean', 'std', 'min', 'max'],
         'ttl': [lambda x: x.mode()[0], 'mean', 'std']
@@ -48,11 +54,10 @@ def generar_analisis_ja4l_servidor_final():
     print("="*95)
     print(global_so.to_string())
     
-    # Guardar en carpeta SO
     ruta_global = os.path.join(nombre_carpeta, 'SV_SO_LATENCIA_GLOBAL.csv')
     global_so.to_csv(ruta_global, sep=';')
 
-    # ANALISIS DETALLADO POR WEB Y SO
+    # Analisis por web y SO
     resumen_web_so = df_total.groupby(['web_buscada', 'so_origen']).agg({
         'latencia': ['mean', 'std', 'min', 'max'],
         'ttl': [lambda x: x.mode()[0], 'mean']
@@ -67,11 +72,10 @@ def generar_analisis_ja4l_servidor_final():
     print("="*95)
     print(resumen_web_so.head(10).to_string())
     
-    # Guardar en carpeta SO
     ruta_web = os.path.join(nombre_carpeta, 'SV_SO_LATENCIA_POR_WEB.csv')
     resumen_web_so.to_csv(ruta_web, index=False, sep=';')
 
-    # ANALISIS DETALLADO POR SNI Y SO
+    # Analisis por SNI y SO
     resumen_sni_so = df_total.groupby(['tls_server_name', 'so_origen']).agg({
         'latencia': ['mean', 'std', 'min', 'max'],
         'ttl': [lambda x: x.mode()[0], 'mean']
@@ -81,7 +85,6 @@ def generar_analisis_ja4l_servidor_final():
         'SNI', 'SO_Origen', 'Latencia_Media', 'Latencia_Desv', 'Latencia_Min', 'Latencia_Max', 'TTL_Moda', 'TTL_Media'
     ]
     
-    # Guardar en carpeta SO
     ruta_detalle = os.path.join(nombre_carpeta, 'SV_SO_LATENCIA_POR_SNI.csv')
     resumen_sni_so.to_csv(ruta_detalle, index=False, sep=';')
     
